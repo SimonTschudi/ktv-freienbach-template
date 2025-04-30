@@ -1,0 +1,19 @@
+---
+import type { HTMLTag, Polymorphic } from "astro/types";
+
+type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag; tpAttr?: string[] }>;
+
+const { as: Tag, tpAttr, ...props } = Astro.props;
+const additionalAttributes = tpAttr
+    ? tpAttr.reduce(
+          (prev: Record<string, unknown>, curr: string) => ({
+              ...prev,
+              [curr]: "",
+          }),
+          {},
+      )
+    : {};
+const attributes = { ...props, ...additionalAttributes };
+---
+
+<Tag {...attributes}><slot /></Tag>

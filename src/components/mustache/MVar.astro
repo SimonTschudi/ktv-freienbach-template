@@ -1,0 +1,14 @@
+---
+import { isProd } from "@utils/Global.utils";
+
+interface Props {
+    tp: string;
+    defaultValue?: string;
+}
+const { tp, defaultValue } = Astro.props as Props;
+---
+
+<>
+    {isProd && `{{${tp}}}`}
+    {!isProd && String(defaultValue)}
+</>

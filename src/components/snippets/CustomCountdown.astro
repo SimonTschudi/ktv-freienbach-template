@@ -1,0 +1,314 @@
+---
+import { type Config, brand } from "@components/lib/Config";
+import Configuration from "@components/lib/Configuration.astro";
+import Preview from "@components/lib/Preview.astro";
+
+function getRoundedFutureTime(days) {
+    const now = new Date();
+    now.setTime(now.getTime() + days * 24 * 60 * 60 * 1000); // Add days in milliseconds
+
+    if (now.getMinutes() > 0 || now.getSeconds() > 0) {
+        now.setHours(now.getHours() + 1); // Round up to the next full hour
+    }
+
+    now.setMinutes(0, 0, 0); // Reset minutes, seconds, and milliseconds
+
+    // Format using local timezone
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const seconds = String(now.getSeconds()).padStart(2, "0");
+
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+}
+
+const defaultConfig: Record<string, Config> = {
+    "end-date": {
+        label: "End Date",
+        name: "end-date",
+        type: "datetime-local",
+        defaultValue: getRoundedFutureTime(2),
+    },
+    "tile-background-color": {
+        label: "Tile Background Color",
+        name: "tile-background-color",
+        type: "color",
+        defaultValue: brand.primaryColor,
+    },
+    "tile-foreground-color": {
+        label: "Tile Foreground Color",
+        name: "tile-foreground-color",
+        type: "color",
+        defaultValue: brand.primaryColorForeground,
+    },
+    "border-radius": {
+        label: "Border Radius",
+        name: "border-radius",
+        type: "text",
+        defaultValue: "0 16px",
+    },
+    "font-size": {
+        label: "Font Size",
+        name: "font-size",
+        type: "text",
+        defaultValue: "16px",
+    },
+    "expire-message": {
+        label: "Expire Message",
+        name: "expire-message",
+        type: "text",
+        defaultValue: "The countdown has expired.",
+    },
+    "hide-seconds": {
+        label: "Hide Seconds",
+        name: "hide-seconds",
+        type: "checkbox",
+        defaultValue: false,
+    },
+    "label-color": {
+        label: "Label Color",
+        name: "label-color",
+        type: "color",
+        defaultValue: brand.textColor,
+    },
+};
+
+const defaultProps = Object.values(defaultConfig).reduce(
+    (acc, { name, defaultValue }) => {
+        acc[name] = defaultValue;
+        return acc;
+    },
+    {},
+);
+---
+
+<Preview componentName="custom-countdown" className="CustomCountdown">
+    <custom-countdown {...defaultProps}> </custom-countdown>
+</Preview>
+<Configuration componentName="custom-countdown" config={defaultConfig} />
+
+<script is:inline>
+    // Define the behaviour for our new type of HTML element.
+    class CustomCountdown extends HTMLElement {
+        static get observedAttributes() {
+            return [
+                "end-date",
+                "tile-background-color",
+                "tile-foreground-color",
+                "border-radius",
+                "font-size",
+                "expire-message",
+                "hide-seconds",
+                "label-color",
+            ];
+        }
+
+        constructor() {
+            super();
+            this.attachShadow({ mode: "open" });
+        }
+
+        connectedCallback() {
+            this.render();
+            this.initTimer();
+        }
+
+        attributeChangedCallback(attrName, prev, curr) {
+            if (curr !== prev) {
+                this[attrName] = curr;
+                this.render();
+            }
+        }
+
+        render() {
+            const {
+                shadowRoot,
+                endDate,
+                tileBackgroundColor,
+                tileForegroundColor,
+                labelColor,
+                borderRadius,
+                fontSize,
+                expireMessage,
+                hideSeconds,
+            } = this;
+            const endDateObj = new Date(endDate);
+
+            shadowRoot.innerHTML = "";
+
+            const { days, hours, minutes, seconds } = this.useDate(endDateObj);
+
+            const wrapper = document.createElement("div");
+            wrapper.classList.add("wrapper");
+
+            wrapper.append(
+                this.createTile("days", "Tage", days),
+                this.createTile("hours", "Stunden", hours, true),
+                this.createTile("minutes", "Minuten", minutes, true),
+            );
+
+            if (!hideSeconds) {
+                wrapper.append(
+                    this.createTile("seconds", "Sekunden", seconds, true),
+                );
+            }
+
+            const style = document.createElement("style");
+            style.textContent = `
+                :host {
+                    --tile-background-color: ${tileBackgroundColor};
+                    --tile-foreground-color: ${tileForegroundColor};
+                    --font-size: ${fontSize};
+                    --border-radius: ${borderRadius};
+                    --label-color: ${labelColor};
+                    display: flex;
+                    justify-content: center;
+                    color: var(--tile-foreground-color);
+                }
+                .wrapper {
+                    display: grid;
+                    grid-template-columns: repeat(4, 1fr);
+                    font-size: var(--font-size);
+                    gap: 8px
+                }
+                .tile-wrapper {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 4px;
+                }
+                .tile {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    background-color: var(--tile-background-color);
+                    color: var(--tile-foreground-color);
+                    padding: 16px;
+                    width: calc(var(--font-size) * 1.5);
+                    border-radius: var(--border-radius);
+                    font-size: var(--font-size);
+                    font-weight: 600;
+                }
+                .label {
+                    font-size: calc(var(--font-size) * 0.75);
+                    color: var(--label-color);
+                    font-weight: 500;
+                    text-align: center;
+                }
+            `;
+
+            shadowRoot.appendChild(style);
+            shadowRoot.appendChild(wrapper);
+        }
+
+        useDate(date) {
+            const _second = 1000;
+            const _minute = _second * 60;
+            const _hour = _minute * 60;
+            const _day = _hour * 24;
+            const diff = date - new Date();
+            return {
+                days: Math.floor(diff / _day),
+                hours: Math.floor((diff % _day) / _hour),
+                minutes: Math.floor((diff % _hour) / _minute),
+                seconds: Math.floor((diff % _minute) / _second),
+            };
+        }
+
+        createTile(name, label, initialValue = 0, dual = false) {
+            // Create a tile element
+            const tileWrapper = document.createElement("div");
+            tileWrapper.classList.add("tile-wrapper");
+
+            const tile = document.createElement("div");
+            tile.classList.add("tile");
+            tile.classList.add(name);
+            tile.textContent = dual
+                ? String(initialValue).padStart(2, "0")
+                : String(initialValue);
+
+            const labelEl = document.createElement("div");
+            labelEl.classList.add("label");
+            labelEl.textContent = label;
+
+            tileWrapper.appendChild(tile);
+            tileWrapper.appendChild(labelEl);
+
+            return tileWrapper;
+        }
+
+        initTimer() {
+            setInterval(() => {
+                const { shadowRoot, endDate, hideSeconds } = this;
+                const endDateObj = new Date(endDate);
+                const { days, hours, minutes, seconds } =
+                    this.useDate(endDateObj);
+                const tiles = shadowRoot.querySelectorAll(".tile");
+                tiles[0].textContent = String(days);
+                tiles[1].textContent = String(hours).padStart(2, "0");
+                tiles[2].textContent = String(minutes).padStart(2, "0");
+                if (!hideSeconds) {
+                    tiles[3].textContent = String(seconds).padStart(2, "0");
+                }
+            }, 1000);
+        }
+
+        get endDate() {
+            return this.getAttribute("end-date");
+        }
+        get tileBackgroundColor() {
+            return this.getAttribute("tile-background-color");
+        }
+        get tileForegroundColor() {
+            return this.getAttribute("tile-foreground-color");
+        }
+        get borderRadius() {
+            return this.getAttribute("border-radius");
+        }
+        get fontSize() {
+            return this.getAttribute("font-size");
+        }
+        get expireMessage() {
+            return this.getAttribute("expire-message");
+        }
+        get hideSeconds() {
+            return this.getAttribute("hide-seconds")?.toLowerCase() === "true";
+        }
+        get labelColor() {
+            return this.getAttribute("label-color");
+        }
+
+        set endDate(value) {
+            this.setAttribute("end-date", value);
+        }
+        set tileBackgroundColor(value) {
+            this.setAttribute("tile-background-color", value);
+        }
+        set tileForegroundColor(value) {
+            this.setAttribute("tile-foreground-color", value);
+        }
+        set borderRadius(value) {
+            this.setAttribute("border-radius", value);
+        }
+        set fontSize(value) {
+            this.setAttribute("font-size", value);
+        }
+        set expireMessage(value) {
+            this.setAttribute("expire-message", value);
+        }
+        set hideSeconds(value) {
+            this.setAttribute("hide-seconds", String(value));
+        }
+        set labelColor(value) {
+            this.setAttribute("label-color", value);
+        }
+    }
+
+    // Tell the browser to use our AstroHeart class for <astro-heart> elements.
+    if (!customElements.get("custom-countdown")) {
+        customElements.define("custom-countdown", CustomCountdown);
+    }
+</script>

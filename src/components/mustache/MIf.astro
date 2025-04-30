@@ -1,0 +1,15 @@
+---
+import { isProd } from "@utils/Global.utils";
+
+interface Props {
+    tp: string;
+    isTrue?: boolean;
+}
+const { tp, isTrue } = Astro.props as Props;
+---
+
+<>
+    {isProd && `{{#${tp}}}`}
+    {(isProd || isTrue) && <slot />}
+    {isProd && `{{/${tp}}}`}
+</>

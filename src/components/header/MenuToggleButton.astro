@@ -1,0 +1,79 @@
+<button
+    type="button"
+    class="menu-toggle"
+    aria-haspopup="menu"
+    aria-label="Menü öffnen oder schliessen"
+>
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+</button>
+
+<style lang="scss">
+    @use "@styles/fn" as *;
+    .menu-toggle {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        width: 32px;
+        height: 32px;
+        padding: 6px 4px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        @include small-tablet {
+            display: none;
+        }
+    }
+    .bar {
+        display: block;
+        width: 24px; /* Adjusted for the new button size */
+        height: 4px;
+        background: #333;
+        border-radius: 2px;
+        transition:
+            transform 0.3s ease-in-out,
+            opacity 0.3s ease-in-out;
+    }
+
+    .menu-toggle:hover .bar {
+        background-color: var(--primary-color);
+    }
+
+    /* Transitions for when the menu is open */
+    .menu-toggle[aria-expanded] .bar:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .menu-toggle[aria-expanded] .bar:nth-child(2) {
+        opacity: 0;
+    }
+
+    .menu-toggle[aria-expanded] .bar:nth-child(3) {
+        transform: rotate(-45deg) translate(6px, -6px);
+    }
+</style>
+
+<script>
+    document.addEventListener("astro:page-load", () => {
+        var menuButton = document.querySelector(".menu-toggle");
+        var header = document.querySelector(".main-header");
+        menuButton.addEventListener("click", function () {
+            const isExpanded = header.classList.toggle("open");
+            const outsideClickFn = function (event: any) {
+                if (!header.contains(event.target)) {
+                    header.classList.remove("open");
+                    menuButton.removeAttribute("aria-expanded");
+                    document.removeEventListener("click", outsideClickFn);
+                }
+            };
+            menuButton?.toggleAttribute("aria-expanded");
+            if (isExpanded) {
+                document.addEventListener("click", outsideClickFn);
+            } else {
+                document.removeEventListener("click", outsideClickFn);
+            }
+        });
+    });
+</script>

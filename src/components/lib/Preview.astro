@@ -1,0 +1,39 @@
+---
+import CopyToClipboardButton from "@components/CopyToClipboardButton.astro";
+
+interface Props {
+    componentName: string;
+    className: string;
+}
+const { componentName, className } = Astro.props as Props;
+---
+
+<div class="preview">
+    <slot />
+    <div class="copy-button">
+        <CopyToClipboardButton
+            componentName={componentName}
+            className={className}
+        />
+    </div>
+</div>
+
+<style>
+    .preview {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 16px;
+        margin: 16px;
+        background-color: #f9f9f9;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        position: relative;
+    }
+
+    .copy-button {
+        display: flex;
+        justify-content: center;
+        position: absolute;
+        top: 4px;
+        right: 8px;
+    }
+</style>

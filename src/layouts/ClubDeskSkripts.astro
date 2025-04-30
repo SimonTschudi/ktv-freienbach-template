@@ -1,0 +1,185 @@
+---
+import MIf from "@components/mustache/MIf.astro";
+import { getURL } from "@utils/Global.utils";
+const path = getURL(
+    "/clubdesk/webpage/cookieconsent/cookieconsent-3.1.1.min.js",
+);
+---
+
+<script src={path} type="text/javascript"></script>
+<MIf tp="cookieConsent.enabled">
+    <script>
+        function deleteAllCookies() {
+            var cookies = document.cookie.split("; ");
+            for (var c = 0; c < cookies.length; c++) {
+                var d = window.location.hostname.split(".");
+                while (d.length > 0) {
+                    var cookieBase =
+                        encodeURIComponent(
+                            cookies[c].split(";")[0].split("=")[0],
+                        ) +
+                        "=; expires=Thu, 01-Jan-1970 00:00:01 GMT; domain=" +
+                        d.join(".") +
+                        " ;path=";
+                    var p = location.pathname.split("/");
+                    document.cookie = cookieBase + "/";
+                    while (p.length > 0) {
+                        document.cookie = cookieBase + p.join("/");
+                        p.pop();
+                    }
+                    d.shift();
+                }
+            }
+        }
+
+        (window as any).cookieconsent.initialise({
+            palette: null,
+            content: {
+                message: "{{cookieConsent.message}}",
+                dismiss: "{{cookieConsent.dismissLabel}}",
+                allow: "{{cookieConsent.allowLabel}}",
+                deny: "{{cookieConsent.denyLabel}}",
+                link: "{{cookieConsent.linkLabel}}",
+                href: "{{cookieConsent.linkUrl}}",
+            },
+            position: "{{cookieConsent.position}}",
+            type: "{{cookieConsent.type}}",
+            revokable: true,
+            onStatusChange: function (status: any) {
+                if (!this.hasConsented()) {
+                    deleteAllCookies();
+                }
+                location.reload();
+            },
+            cookie: {
+                name: "{{cookieConsent.cookieName}}",
+            },
+        });
+    </script>
+</MIf>
+
+<script>
+    document.addEventListener("astro:page-load", () => {
+        $(window).scroll(function () {
+            var body = $("body");
+            if ($(this).scrollTop() > 100) {
+                body.addClass("cd-scroll");
+            } else {
+                body.removeClass("cd-scroll");
+            }
+        });
+
+        function toggleExpand(event) {
+            event.preventDefault();
+
+            var clickedEntry = event.target;
+            if (!(event.target instanceof HTMLAnchorElement)) {
+                clickedEntry = event.target.parentElement;
+            }
+
+            $(clickedEntry).toggleClass("open");
+            $(clickedEntry.nextElementSibling).children("ul").slideToggle();
+
+            $(clickedEntry.parentElement)
+                .siblings()
+                .each(function () {
+                    $(this).children("a").removeClass("open");
+                    $(this)
+                        .children("div")
+                        .each(function () {
+                            $(this)
+                                .children("ul")
+                                .each(function () {
+                                    if ($(this).is(":visible")) {
+                                        $(this).slideToggle();
+                                    }
+                                });
+                        });
+                });
+        }
+
+        function closeAllDropDowns() {
+            $(".cd-singledropdownmenu > .cd-menu-level-1")
+                .find(".cd-menu-expand")
+                .each(function () {
+                    if ($(this).hasClass("open")) {
+                        $(this).toggleClass("open");
+                        $(this.nextElementSibling).children("ul").slideToggle();
+                    }
+                });
+        }
+
+        $(".cd-singledropdownmenu").find(".cd-menu-expand").click(toggleExpand);
+
+        function toggleMobileMenu(event) {
+            event.stopPropagation();
+
+            document.body.classList.toggle("cd-mobile-menu-open");
+
+            // if ($(document.body).hasClass('cd-mobile-menu-open')) {
+            //     var y = window.scrollY;
+            //     document.body.style.top = '-' + y + 'px';
+            //     document.body.style.position = 'fixed';
+            // } else {
+            //     const scrollY = document.body.style.top;
+            //     document.body.style.position = '';
+            //     document.body.style.top = '';
+            //     window.scrollTo(0, parseInt(scrollY || '0') * -1);
+            // }
+
+            var navIcons = document.getElementsByClassName("nav-icon");
+            Object.keys(navIcons).forEach(function (key) {
+                navIcons[key].classList.toggle("open");
+            });
+
+            document
+                .getElementsByClassName("cd-mobile-menu-level-1")[0]
+                .classList.toggle("open");
+            $(".cd-mobile-menu-background").toggle();
+        }
+
+        $(".cd-mobile-menu")
+            .find(".cd-menu-expand")
+            .click(function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                var clickedEntry = event.target;
+                if (!(event.target instanceof HTMLAnchorElement)) {
+                    clickedEntry = event.target.parentElement;
+                }
+
+                $(clickedEntry).toggleClass("active");
+                $(clickedEntry.nextElementSibling).children("ul").slideToggle();
+
+                $(clickedEntry.parentElement)
+                    .siblings()
+                    .each(function () {
+                        $(this).children("a").removeClass("active");
+                        $(this)
+                            .children("div")
+                            .each(function () {
+                                $(this)
+                                    .children("ul")
+                                    .each(function () {
+                                        if ($(this).is(":visible")) {
+                                            $(this).slideToggle();
+                                        }
+                                    });
+                            });
+                    });
+            });
+
+        $(document).click(function (event) {
+            if (
+                $(document.body).hasClass("cd-mobile-menu-open") &&
+                event.target.tagName.toLowerCase() === "a"
+            ) {
+                toggleMobileMenu(event);
+            }
+        });
+        function topFunction() {
+            $("html, body").animate({ scrollTop: 0 }, 1200);
+        }
+    });
+</script>

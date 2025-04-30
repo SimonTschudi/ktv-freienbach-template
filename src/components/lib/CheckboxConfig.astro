@@ -1,0 +1,45 @@
+---
+import { type Config } from "./Config";
+import { ulid } from "ulid";
+
+interface Props {
+    componentName: string;
+    config: Config;
+}
+const { componentName, config } = Astro.props as Props;
+const { label, name, type, defaultValue } = config;
+const id = ulid();
+---
+
+<div class="input-check-config">
+    <input id={id} type={type} name={id} checked={defaultValue as boolean} />
+    <label for={id} class="label">
+        {label}
+    </label>
+</div>
+
+<style>
+    .input-check-config {
+        display: flex;
+        gap: 8px;
+    }
+
+    .label {
+        font-size: 14px;
+    }
+    input {
+        padding: 8px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+    }
+</style>
+
+<script define:vars={{ componentName, name, type, id }}>
+    const input = document.getElementById(id);
+    input.addEventListener("input", (e) => {
+        document
+            .querySelector(componentName)
+            .setAttribute(name, e.target.checked);
+    });
+</script>

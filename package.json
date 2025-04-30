@@ -1,0 +1,24 @@
+{
+  "name": "ktv-freienbach-template",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev --port 3000",
+    "build": "astro build && node build-tools/rename-index.js",
+    "build:prod": "astro check && pnpm build",
+    "preview": "astro preview --port 3001",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "tiny-editor": "^0.5.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "astro": "^5.7.5",
+    "sass-embedded": "^1.87.0",
+    "sharp": "^0.34.1",
+    "typescript": "^5.8.3",
+    "ulid": "^3.0.0",
+    "vite-plugin-static-copy": "2.3.1"
+  }
+}

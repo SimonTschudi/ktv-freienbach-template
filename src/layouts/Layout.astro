@@ -1,0 +1,234 @@
+---
+import MTemplate from "@components/mustache/MTemplate.astro";
+import Footer from "./Footer.astro";
+import MainContent from "./MainContent.astro";
+import Header from "./Header.astro";
+import ClubDeskSkripts from "./ClubDeskSkripts.astro";
+import { ClientRouter } from "astro:transitions";
+import stylesUrl from "../styles/page.scss?url";
+import { getURL, isProd } from "@utils/Global.utils";
+import MainHeader from "./MainHeader.astro";
+import PortraitMask from "@assets/portrait-mask.svg";
+import LandscapeMask from "@assets/landscape-mask.svg";
+import "@styles/fn.scss";
+import EmbedHtmlSnippetsEditor from "@components/EmbedHtmlSnippetsEditor.astro";
+
+const title = isProd ? "{{title}}" : "KTV Freienbach | Home";
+---
+
+<!doctype html>
+<html lang="de">
+	<head>
+		<MTemplate tp="baseHref" />
+		<MTemplate tp="fragmentHeadStart" />
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+			rel="stylesheet"
+		/>
+		<title>{title}</title>
+		<MTemplate tp="headIncludes">
+			<link
+				crossorigin="anonymous"
+				rel="stylesheet"
+				type="text/css"
+				media="all"
+				href="https://testvereinsname.clubdesk.com/clubdesk/v_4.4.3/shared/css/normalize.css"
+			/>
+			<link
+				crossorigin="anonymous"
+				rel="stylesheet"
+				type="text/css"
+				media="all"
+				href="https://testvereinsname.clubdesk.com/clubdesk/v_4.4.3/shared/css/layout.css"
+			/>
+			<link
+				crossorigin="anonymous"
+				rel="stylesheet"
+				type="text/css"
+				media="all"
+				href="https://testvereinsname.clubdesk.com/clubdesk/v_4.4.3/shared/css/tinyMceContent.css"
+			/>
+			<link
+				crossorigin="anonymous"
+				rel="stylesheet"
+				type="text/css"
+				media="all"
+				href="https://testvereinsname.clubdesk.com/clubdesk/v_4.4.3/webpage/css/admin.css"
+			/>
+			<link
+				crossorigin="anonymous"
+				rel="stylesheet"
+				type="text/css"
+				media="all"
+				href="https://testvereinsname.clubdesk.com/clubdesk/webpage/fontawesome_6_1_1/css/all.min.css"
+			/>
+			<link
+				crossorigin="anonymous"
+				rel="stylesheet"
+				type="text/css"
+				media="all"
+				href="https://testvereinsname.clubdesk.com/clubdesk/webpage/lightbox/featherlight-1.7.13.min.css"
+			/>
+			<link
+				crossorigin="anonymous"
+				rel="stylesheet"
+				type="text/css"
+				media="all"
+				href="https://testvereinsname.clubdesk.com/clubdesk/webpage/aos/aos-2.3.2.css"
+			/>
+			<link
+				crossorigin="anonymous"
+				rel="stylesheet"
+				type="text/css"
+				media="all"
+				href="https://testvereinsname.clubdesk.com/clubdesk/webpage/owl/css/owl.carousel-2.3.4.min.css"
+			/>
+			<link
+				crossorigin="anonymous"
+				rel="stylesheet"
+				type="text/css"
+				media="all"
+				href="https://testvereinsname.clubdesk.com/clubdesk/webpage/owl/css/owl.theme.default-2.3.4.min.css"
+			/>
+			<link
+				crossorigin="anonymous"
+				rel="stylesheet"
+				type="text/css"
+				media="all"
+				href="https://testvereinsname.clubdesk.com/clubdesk/webpage/owl/css/animate-1.0.css"
+			/>
+			<link
+				crossorigin="anonymous"
+				rel="stylesheet"
+				type="text/css"
+				media="all"
+				href="https://testvereinsname.clubdesk.com/clubdesk/v_4.4.3/content.css?v=1745781376577"
+			/>
+			<script
+				crossorigin="anonymous"
+				type="text/javascript"
+				src="https://testvereinsname.clubdesk.com/clubdesk/v_4.4.3/webpage/jquery_3_6_0/jquery-3.6.0.min.js"
+			></script>
+		</MTemplate>
+		<link
+			rel="stylesheet"
+			href={getURL(
+				"/clubdesk/webpage/cookieconsent/cookieconsent-3.1.1.min.css",
+			)}
+		/>
+		<link
+			rel="stylesheet"
+			href=`${stylesUrl}?v={{lastGenWwwFilesChange}}`
+		/>
+		<link rel="icon" href="genwwwfiles/favicon.png" />
+		<link rel="icon" href="genwwwfiles/favicon.svg" type="image/svg+xml" />
+		<MTemplate tp="fragmentHeadEnd" />
+		<ClientRouter />
+	</head>
+	<body class="{{{bodyClasses}}}">
+		<MTemplate tp="fragmentBodyStart" />
+		<PortraitMask class="svg-mask" />
+		<LandscapeMask class="svg-mask" />
+		<MTemplate tp="pageBackground" />
+		<MainHeader />
+		<main class="main {{{mainClasses}}}">
+			<div class="cd-totop-button" onclick="topFunction()">
+				<i class="fas fa-chevron-up"></i>
+			</div>
+
+			<Header />
+
+			<MainContent><slot /></MainContent>
+
+			<Footer />
+		</main>
+		<MTemplate tp="bodyEndIncludes" />
+		<ClubDeskSkripts />
+		<EmbedHtmlSnippetsEditor />
+		<MTemplate tp="fragmentBodyEnd" />
+	</body>
+</html>
+
+<style lang="scss" is:global>
+	@use "@styles/fn" as *;
+	:root {
+		--header-height: 64px;
+		--header-height-small: 40px;
+		--header-padding-vertical: 4px;
+		--header-padding-horizontal: 16px;
+		--header-background-color: rgba(255, 255, 255, 0.75);
+		--shadow-color-light: rgba(0, 0, 0, 0.1);
+		--primary-color: #0e66a1;
+		--secondary-color: #f4a600;
+		--background-color: #ffffff;
+		--text-color: #0f0f0f;
+		--primary-color-foreground: var(--background-color);
+		--secondary-color-foreground: var(--text-color);
+		--max-content-width: 1200px;
+		@include small-tablet {
+			--header-height: 128px;
+			--header-height-small: 64px;
+			--header-padding-vertical: 16px;
+			--header-padding-horizontal: 32px;
+		}
+	}
+	body {
+		background-color: var(--background-color);
+		color: var(--text-color);
+	}
+
+	html,
+	td,
+	div,
+	.tinyMceContent > * {
+		font-family: "Inter", sans-serif;
+		font-optical-sizing: auto;
+		font-weight: normal;
+		font-style: normal;
+	}
+
+	.cd-header-empty {
+		padding-top: 64px;
+		@include small-tablet {
+			padding-top: 128px;
+		}
+	}
+	.cd-header .cd-min-height-set {
+		background: linear-gradient(
+			135deg,
+			var(--background-color) 0%,
+			var(--background-color) 50%,
+			var(--primary-color) 50%,
+			var(--primary-color) 100%
+		);
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-end;
+		align-items: center;
+	}
+	.cd-header .cd-min-height-set .cd-backgroundPane {
+		clip-path: url(#portrait-mask);
+		background-color: transparent;
+		z-index: 0;
+		// media landscape selector
+		@media screen and (orientation: landscape) {
+			clip-path: url(#landscape-mask);
+		}
+	}
+	.cd-totop-button {
+		display: none;
+		// TODO add scroll to top button
+	}
+</style>
+
+<style>
+	.svg-mask {
+		position: absolute;
+		z-index: -1000;
+		width: 50px;
+	}
+</style>

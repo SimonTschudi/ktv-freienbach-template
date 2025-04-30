@@ -1,0 +1,165 @@
+---
+import MElement from "@components/mustache/MElement.astro";
+import MIf from "@components/mustache/MIf.astro";
+import MIfNot from "@components/mustache/MIfNot.astro";
+import MVar from "@components/mustache/MVar.astro";
+import ProdDev from "@components/mustache/ProdDev.astro";
+import Logo from "@assets/ktv-logo.svg";
+
+const isMobileNavActive = false;
+---
+
+<nav class="cd-mobile-menu-bar-fixed cd-hide-large">
+    <div class="cd-mobile-menu-bar">
+        <div class="cd-mobile-menu-bar-content scroll-offset-mobile">
+            <div class="mobile-menu">
+                <div
+                    class="cd-mobile-menu-button"
+                    onclick="toggleMobileMenu(event)"
+                >
+                    <div class="nav-icon">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <div class="menu-label">Menü</div>
+                </div>
+            </div>
+
+            <div class="filler"></div>
+
+            <div class="cd-login-link-mobile">
+                <MIf tp="loggedIn">
+                    <a class="cd-link-login" href="{{{logOutUrl}}}"
+                        ><i style="padding: 3px;" class="fas fa-sign-out-alt"
+                        ></i></a
+                    >
+                </MIf>
+                <MIfNot tp="loggedIn" isNot>
+                    <a class="cd-link-login" href="{{{logInUrl}}}"
+                        ><i style="padding: 3px;" class="fas fa-sign-in-alt"
+                        ></i></a
+                    >
+                </MIfNot>
+            </div>
+            <div class="cd-logo-and-name-mobile">
+                <a class="cd-club-logo-link" href="{{{homePath}}}">
+                    <ProdDev>
+                        <img
+                            slot="prod"
+                            class="cd-club-logo"
+                            src="{{logoUrl}}"
+                        />
+                        <Logo class="cd-club-logo" />
+                    </ProdDev>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="cd-mobile-menu cd-menu">
+        <div class="cd-mobile-menu-background"></div>
+        <div class="cd-mobile-menu-level-1">
+            <ul>
+                <MIf tp="menuItems" isTrue>
+                    <li>
+                        <MElement
+                            as="a"
+                            href="{{url}}{{params}}"
+                            tpAttr={[
+                                '{{#inNewWindow}}target="_blank"{{/inNewWindow}}',
+                            ]}
+                            data-id="{{id}}"
+                            data-parent-id="{{parentId}}"
+                            class="cd-menu-item {{#active}}cd-menu-active{{/active}} {{#selected}}cd-menu-selected{{/selected}} {{^children.empty}}cd-menu-expand{{/children.empty}}"
+                        >
+                            <MVar tp="title" />
+                            <MIfNot tp="children.empty">
+                                <i class="fas fa-chevron-down cd-menu-expander"
+                                ></i>
+                            </MIfNot>
+                        </MElement>
+                        <MIfNot tp="children.empty">
+                            <div class="cd-mobile-menu-level-2">
+                                <ul>
+                                    <MIfNot tp="emptyPage">
+                                        <li>
+                                            <MElement
+                                                as="a"
+                                                href="{{url}}{{params}}"
+                                                tpAttr={[
+                                                    '{{#inNewWindow}}target="_blank"{{/inNewWindow}}',
+                                                ]}
+                                                class="cd-menu-item {{#active}}cd-menu-active{{/active}}"
+                                            >
+                                                <MVar tp="title" />
+                                            </MElement>
+                                        </li>
+                                    </MIfNot>
+                                    <MIf tp="children">
+                                        <li>
+                                            <MElement
+                                                as="a"
+                                                href="{{url}}{{params}}"
+                                                tpAttr={[
+                                                    '{{#inNewWindow}}target="_blank"{{/inNewWindow}}',
+                                                ]}
+                                                data-id="{{id}}"
+                                                data-parent-id="{{parentId}}"
+                                                class="cd-menu-item {{#active}}cd-menu-active{{/active}} {{#selected}}cd-menu-selected{{/selected}} {{^children.empty}}cd-menu-expand{{/children.empty}}"
+                                            >
+                                                <MVar tp="title" />
+                                                <MIfNot tp="children.empty">
+                                                    <i
+                                                        class="fas fa-chevron-down cd-menu-expander"
+                                                    ></i>
+                                                </MIfNot>
+                                            </MElement>
+                                            <div class="cd-mobile-menu-level-3">
+                                                <ul>
+                                                    <MIfNot tp="emptyPage">
+                                                        <li>
+                                                            <MElement
+                                                                as="a"
+                                                                href="{{url}}{{params}}"
+                                                                tpAttr={[
+                                                                    '{{#inNewWindow}}target="_blank"{{/inNewWindow}}',
+                                                                ]}
+                                                                class="cd-menu-item {{#active}}cd-menu-active{{/active}}"
+                                                            >
+                                                                <MVar
+                                                                    tp="title"
+                                                                />
+                                                            </MElement>
+                                                        </li>
+                                                    </MIfNot>
+                                                    <MIf tp="children">
+                                                        <li>
+                                                            <MElement
+                                                                as="a"
+                                                                href="{{url}}{{params}}"
+                                                                tpAttr={[
+                                                                    '{{#inNewWindow}}target="_blank"{{/inNewWindow}}',
+                                                                ]}
+                                                                data-id="{{id}}"
+                                                                data-parent-id="{{parentId}}"
+                                                                class="cd-menu-item {{#active}}cd-menu-active{{/active}}"
+                                                            >
+                                                                <MVar
+                                                                    tp="title"
+                                                                />
+                                                            </MElement>
+                                                        </li>
+                                                    </MIf>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                    </MIf>
+                                </ul>
+                            </div>
+                        </MIfNot>
+                    </li>
+                </MIf>
+            </ul>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,58 @@
+---
+import MIf from "@components/mustache/MIf.astro";
+import MIfNot from "@components/mustache/MIfNot.astro";
+
+interface Props {
+    hasText?: boolean;
+    class?: string;
+}
+const { hasText = false, class: className, ...rest } = Astro.props as Props;
+---
+
+<MIf tp="loggedIn">
+    <a
+        class:list={["cd-link-login", className]}
+        href="{{{logOutUrl}}}"
+        aria-label="Logout"
+        {...rest}
+    >
+        <i role="presentation" style="padding: 3px;" class="fas fa-sign-out-alt"
+        ></i>
+        {hasText ? <span>Logout</span> : ""}
+    </a>
+</MIf>
+<MIfNot tp="loggedIn" isNot>
+    <a
+        class:list={["cd-link-login", className]}
+        href="{{{logInUrl}}}"
+        aria-label="Login"
+        {...rest}
+    >
+        <i role="presentation" style="padding: 3px;" class="fas fa-sign-in-alt"
+        ></i>
+        {hasText ? <span>Login</span> : ""}
+    </a>
+</MIfNot>
+
+<style lang="scss">
+    @use "@styles/fn" as *;
+    a,
+    a:link,
+    a:visited,
+    a:active {
+        color: var(--text-color);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        padding: 0 8px;
+        border: none !important;
+    }
+    a:hover {
+        color: var(--primary-color);
+    }
+    span {
+        padding-left: 8px;
+    }
+</style>

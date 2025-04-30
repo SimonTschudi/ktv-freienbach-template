@@ -1,0 +1,345 @@
+---
+import { type Config, brand } from "@components/lib/Config";
+import Configuration from "@components/lib/Configuration.astro";
+import Preview from "@components/lib/Preview.astro";
+import KTVLogo from "@assets/ktv-logo.svg";
+
+function encodeHTML(str) {
+    return str
+        .replace(/&/g, "&amp;") // Encode '&' first to avoid double encoding
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
+const defaultConfig: Record<string, Config> = {
+    "background-color": {
+        label: "Card Background Color",
+        name: "background-color",
+        type: "color",
+        defaultValue: brand.backgroundColor,
+    },
+    "foreground-color": {
+        label: "Card Text Color",
+        name: "foreground-color",
+        type: "color",
+        defaultValue: brand.textColor,
+    },
+    "border-radius": {
+        label: "Border Radius",
+        name: "border-radius",
+        type: "text",
+        defaultValue: "0 64px",
+    },
+    "show-logo": {
+        label: "Show Logo",
+        name: "show-logo",
+        type: "checkbox",
+        defaultValue: true,
+    },
+    content: {
+        label: "Content",
+        name: "content",
+        type: "content",
+        defaultValue: encodeHTML(
+            "<h2>Werde aktiv!</h2><p>Wir freuen uns, dass du dich für eine Mitgliedschaft im KTV Freienbach interessierst. Hier findest du alle Informationen zu den verschiedenen Mitgliedschaften und den damit verbundenen Vorteilen.</p>",
+        ),
+    },
+    action: {
+        label: "Action Link Text",
+        name: "action",
+        type: "text",
+        defaultValue: "Kontaktiere uns",
+    },
+    "action-url": {
+        label: "Action URL",
+        name: "action-url",
+        type: "text",
+        defaultValue: "/kontakt",
+    },
+    "action-background-color": {
+        label: "Action Background Color",
+        name: "action-background-color",
+        type: "color",
+        defaultValue: brand.primaryColor,
+    },
+    "action-foreground-color": {
+        label: "Action Foreground Color",
+        name: "action-foreground-color",
+        type: "color",
+        defaultValue: brand.primaryColorForeground,
+    },
+    "action-border-radius": {
+        label: "Action Border Radius",
+        name: "action-border-radius",
+        type: "text",
+        defaultValue: "0 32px",
+    },
+    "action-font-size": {
+        label: "Action Font Size",
+        name: "action-font-size",
+        type: "text",
+        defaultValue: "16px",
+    },
+};
+
+const defaultProps = Object.values(defaultConfig).reduce(
+    (acc, { name, defaultValue }) => {
+        acc[name] = defaultValue;
+        return acc;
+    },
+    {},
+);
+---
+
+<Preview componentName="footer-card" className="FooterCard">
+    <footer-card {...defaultProps}>
+        <KTVLogo class="ktv-logo" style={{ display: "none" }} />
+        <div class="content"></div>
+    </footer-card>
+</Preview>
+<Configuration componentName="footer-card" config={defaultConfig} />
+
+<script is:inline>
+    // Define the behaviour for our new type of HTML element.
+    class FooterCard extends HTMLElement {
+        #logo = null;
+
+        static get observedAttributes() {
+            return [
+                "background-color",
+                "foreground-color",
+                "border-radius",
+                "show-logo",
+                "content",
+                "action",
+                "action-url",
+                "action-background-color",
+                "action-foreground-color",
+                "action-border-radius",
+                "action-font-size",
+            ];
+        }
+
+        constructor() {
+            super();
+            const logoNode = this.querySelector(".ktv-logo");
+            this.#logo = logoNode.cloneNode(true);
+            this.#logo.removeAttribute("style");
+            this.attachShadow({ mode: "open" });
+        }
+
+        connectedCallback() {
+            this.render();
+        }
+
+        attributeChangedCallback(attrName, prev, curr) {
+            if (curr !== prev) {
+                this[attrName] = curr;
+                this.render();
+            }
+        }
+
+        decodeHTML(str) {
+            let temp = document.createElement("textarea");
+            temp.innerHTML = str;
+            return temp.value;
+        }
+
+        render() {
+            const {
+                shadowRoot,
+                backgroundColor,
+                foregroundColor,
+                borderRadius,
+                showLogo,
+                content,
+                action,
+                actionUrl,
+                actionBackgroundColor,
+                actionForegroundColor,
+                actionBorderRadius,
+                actionFontSize,
+            } = this;
+
+            shadowRoot.innerHTML = "";
+
+            const wrapper = document.createElement("div");
+            wrapper.classList.add("wrapper");
+            wrapper.classList.toggle("no-logo", !showLogo);
+
+            const contentEl = document.createElement("div");
+            contentEl.classList.add("content");
+
+            const contentInner = document.createElement("div");
+            contentInner.classList.add("content-inner");
+            contentInner.innerHTML = this.decodeHTML(content);
+            contentEl.appendChild(contentInner);
+
+            const actionButton = document.createElement("a");
+            actionButton.classList.add("action-button");
+            actionButton.href = actionUrl;
+            actionButton.innerText = action;
+            contentEl.appendChild(actionButton);
+
+            const style = document.createElement("style");
+            style.textContent = `
+                :host {
+                    --background-color: ${backgroundColor};
+                    --foreground-color: ${foregroundColor};
+                    --border-radius: ${borderRadius};
+                    --action-background-color: ${actionBackgroundColor};
+                    --action-foreground-color: ${actionForegroundColor};
+                    --action-border-radius: ${actionBorderRadius};
+                    --action-font-size: ${actionFontSize};
+                    background-image: linear-gradient(to bottom, rgba(14, 102, 161, 0.3) 0%, rgba(14, 102, 161, 0.3) 50%, #0e66a1 50%, #0e66a1 100%);
+                    display: flex;
+                    justify-content: center;
+                    padding: 16px;
+                    font-family: "Inter", sans-serif;
+                }
+                .wrapper {
+                    background-color: var(--background-color);
+                    color: var(--foreground-color);
+                    border-radius: var(--border-radius);
+                    padding: 16px;
+                    width: 100%;
+                    max-width: 1200px;
+                    display: grid;
+                    align-items: center;
+                    justify-items: center;
+                    gap: 16px;
+                    grid-auto-flow: row;
+                    grid-template-columns: 1fr;
+                }
+
+                .wrapper.no-logo {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+
+                }
+
+                .ktv-logo {
+                    padding: 0;
+                    max-width: 384px;
+                }
+
+                .content {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 16px;
+                    justify-content: space-between;
+                }
+
+                .action-button {
+                    display: inline-block;
+                    background-color: var(--action-background-color);
+                    color: var(--action-foreground-color);
+                    border-radius: var(--action-border-radius);
+                    padding: 16px 32px;
+                    font-size: var(--action-font-size);
+                    text-decoration: none;
+                    text-align: center;
+                    transition: all 0.3s ease;
+                    margin: 0 auto;
+                }
+
+                @media (min-width: 768px) {
+                    :host {
+                        padding: 16px 32px;
+                    }
+
+                    .ktv-logo {
+                        padding: 32px 16px;
+                    }
+
+                    .wrapper {
+                        gap: 64px;
+                        grid-template-columns: minmax(64px, 256px) 1fr;
+                    }
+                }
+            `;
+
+            shadowRoot.appendChild(style);
+            shadowRoot.appendChild(wrapper);
+            if (showLogo) {
+                wrapper.appendChild(this.#logo);
+            }
+            wrapper.appendChild(contentEl);
+        }
+
+        get backgroundColor() {
+            return this.getAttribute("background-color");
+        }
+        set backgroundColor(value) {
+            this.setAttribute("background-color", value);
+        }
+        get foregroundColor() {
+            return this.getAttribute("foreground-color");
+        }
+        set foregroundColor(value) {
+            this.setAttribute("foreground-color", value);
+        }
+        get borderRadius() {
+            return this.getAttribute("border-radius");
+        }
+        set borderRadius(value) {
+            this.setAttribute("border-radius", value);
+        }
+        get showLogo() {
+            return this.getAttribute("show-logo")?.toLowerCase() === "true";
+        }
+        set showLogo(value) {
+            this.setAttribute("show-logo", String(value));
+        }
+        get content() {
+            return this.getAttribute("content");
+        }
+        set content(value) {
+            this.setAttribute("content", value);
+        }
+        get action() {
+            return this.getAttribute("action");
+        }
+        set action(value) {
+            this.setAttribute("action", value);
+        }
+        get actionUrl() {
+            return this.getAttribute("action-url");
+        }
+        set actionUrl(value) {
+            this.setAttribute("action-url", value);
+        }
+        get actionBackgroundColor() {
+            return this.getAttribute("action-background-color");
+        }
+        set actionBackgroundColor(value) {
+            this.setAttribute("action-background-color", value);
+        }
+        get actionForegroundColor() {
+            return this.getAttribute("action-foreground-color");
+        }
+        set actionForegroundColor(value) {
+            this.setAttribute("action-foreground-color", value);
+        }
+        get actionBorderRadius() {
+            return this.getAttribute("action-border-radius");
+        }
+        set actionBorderRadius(value) {
+            this.setAttribute("action-border-radius", value);
+        }
+        get actionFontSize() {
+            return this.getAttribute("action-font-size");
+        }
+        set actionFontSize(value) {
+            this.setAttribute("action-font-size", value);
+        }
+    }
+
+    // Tell the browser to use our AstroHeart class for <astro-heart> elements.
+    if (!customElements.get("footer-card")) {
+        customElements.define("footer-card", FooterCard);
+    }
+</script>

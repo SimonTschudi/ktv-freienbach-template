@@ -1,0 +1,13 @@
+---
+import MVar from "@components/mustache/MVar.astro";
+---
+
+<button
+    role="menuitem"
+    class="{{#active}}cd-menu-active{{/active}} {{#selected}}cd-menu-selected{{/selected}} {{^children.empty}}cd-menu-expand{{/children.empty}}"
+    aria-haspopup
+    aria-expanded="true"
+>
+    <MVar tp="title" defaultValue="Home" />
+    <i class="fas fa-chevron-down"></i>
+</button>

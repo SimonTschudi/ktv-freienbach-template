@@ -1,0 +1,524 @@
+---
+import MElement from "@components/mustache/MElement.astro";
+import MIf from "@components/mustache/MIf.astro";
+import MIfNot from "@components/mustache/MIfNot.astro";
+import MVar from "@components/mustache/MVar.astro";
+import ProdDev from "@components/mustache/ProdDev.astro";
+import MenuToggleButton from "@components/header/MenuToggleButton.astro";
+import LoginButton from "@components/header/LoginButton.astro";
+import MenuAnchorElement from "@components/header/MenuAnchorElement.astro";
+---
+
+<nav>
+    <LoginButton class="mobile-login" />
+    <MenuToggleButton />
+    <ProdDev>
+        <div slot="prod" class="nav-wrapper">
+            <ul role="menu">
+                <MIf tp="menuItems" isTrue>
+                    <li role="menuitem">
+                        <MIf tp="children.empty" isTrue>
+                            <MElement
+                                as="a"
+                                tpAttr={[
+                                    '{{#inNewWindow}}target="_blank"{{/inNewWindow}}',
+                                ]}
+                                href="{{url}}{{params}}"
+                                data-id="{{id}}"
+                                data-parent-id="{{parentId}}"
+                                class="menu-item {{#active}}cd-menu-active{{/active}} {{#selected}}cd-menu-selected{{/selected}} {{^children.empty}}cd-menu-expand{{/children.empty}}"
+                            >
+                                <MVar tp="title" defaultValue="Home" />
+                            </MElement>
+                        </MIf>
+                        <MIfNot tp="children.empty">
+                            <button
+                                role="menuitem"
+                                class="{{#active}}cd-menu-active{{/active}} {{#selected}}cd-menu-selected{{/selected}} {{^children.empty}}cd-menu-expand{{/children.empty}}"
+                                aria-haspopup
+                                aria-expanded="{{#selected}}true{{/selected}}{{^selected}}false{{/selected}}"
+                            >
+                                <MVar tp="title" defaultValue="Home" />
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </MIfNot>
+
+                        <MIfNot tp="children.empty">
+                            <div class="sub-menu">
+                                <ul>
+                                    <li>
+                                        <MElement
+                                            as="a"
+                                            tpAttr={[
+                                                '{{#inNewWindow}}target="_blank"{{/inNewWindow}}',
+                                            ]}
+                                            href="{{url}}{{params}}"
+                                            data-id="{{id}}"
+                                            data-parent-id="{{parentId}}"
+                                            class="menu-item {{#active}}cd-menu-active{{/active}} {{#selected}}cd-menu-selected{{/selected}} {{^children.empty}}cd-menu-expand{{/children.empty}}"
+                                        >
+                                            <MVar
+                                                tp="title"
+                                                defaultValue="Home"
+                                            />
+                                        </MElement>
+                                    </li>
+                                    <MIf tp="children">
+                                        <li>
+                                            <MIf tp="children.empty" isTrue>
+                                                <MElement
+                                                    as="a"
+                                                    tpAttr={[
+                                                        '{{#inNewWindow}}target="_blank"{{/inNewWindow}}',
+                                                    ]}
+                                                    href="{{url}}{{params}}"
+                                                    data-id="{{id}}"
+                                                    data-parent-id="{{parentId}}"
+                                                    class="menu-item {{#active}}cd-menu-active{{/active}} {{#selected}}cd-menu-selected{{/selected}} {{^children.empty}}cd-menu-expand{{/children.empty}}"
+                                                >
+                                                    <MVar
+                                                        tp="title"
+                                                        defaultValue="Home"
+                                                    />
+                                                </MElement>
+                                            </MIf>
+                                            <MIfNot tp="children.empty">
+                                                <button
+                                                    role="menuitem"
+                                                    class="{{#active}}cd-menu-active{{/active}} {{#selected}}cd-menu-selected{{/selected}} {{^children.empty}}cd-menu-expand{{/children.empty}}"
+                                                    aria-haspopup
+                                                    aria-expanded="{{#selected}}true{{/selected}}{{^selected}}false{{/selected}}"
+                                                >
+                                                    <MVar
+                                                        tp="title"
+                                                        defaultValue="Home"
+                                                    />
+                                                    <i
+                                                        class="fas fa-chevron-down"
+                                                    ></i>
+                                                </button>
+                                            </MIfNot>
+
+                                            <MIfNot tp="children.empty">
+                                                <div class="sub-menu">
+                                                    <ul>
+                                                        <li>
+                                                            <MenuAnchorElement
+                                                            />
+                                                        </li>
+                                                        <MIf tp="children">
+                                                            <li>
+                                                                <MenuAnchorElement
+                                                                />
+                                                            </li>
+                                                        </MIf>
+                                                    </ul>
+                                                </div>
+                                            </MIfNot>
+                                        </li>
+                                    </MIf>
+                                </ul>
+                            </div>
+                        </MIfNot>
+                    </li>
+                </MIf>
+                <li class="login-wrapper" role="menuitem">
+                    <LoginButton class="right-loggin-button" hasText />
+                </li>
+            </ul>
+        </div>
+        <div slot="dev" class="nav-wrapper">
+            <ul role="menu">
+                <li>
+                    <a role="menuitem" class="menu-item" href="#">Home</a>
+                </li>
+                <li>
+                    <button
+                        class="cd-menu-expand cd-menu-selected"
+                        aria-haspopup
+                        aria-expanded="true"
+                        >Verein<i class="fas fa-chevron-down"></i></button
+                    >
+                    <div class="sub-menu">
+                        <ul>
+                            <li>
+                                <a role="menuitem" class="menu-item" href="#"
+                                    >Verein</a
+                                >
+                            </li>
+                            <li>
+                                <a
+                                    role="menuitem"
+                                    class="menu-item cd-menu-active cd-menu-selected"
+                                    href="#">Vorstand</a
+                                >
+                            </li>
+                            <li>
+                                <a role="menuitem" class="menu-item" href="#"
+                                    >Mitglieder</a
+                                >
+                            </li>
+                            <li>
+                                <a role="menuitem" class="menu-item" href="#"
+                                    >Statuten</a
+                                >
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    <button class="cd-menu-expand" aria-haspopup
+                        >Aktivitäten<i class="fas fa-chevron-down"></i></button
+                    >
+                    <div class="sub-menu">
+                        <ul>
+                            <li>
+                                <a role="menuitem" class="menu-item" href="#"
+                                    >Aktivitäten</a
+                                >
+                            </li>
+                            <li>
+                                <a role="menuitem" class="menu-item" href="#"
+                                    >Anlässe</a
+                                >
+                            </li>
+                            <li>
+                                <a role="menuitem" class="menu-item" href="#"
+                                    >Berichte</a
+                                >
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    <a role="menuitem" class="menu-item" href="#">News</a>
+                </li>
+                <li class="login-wrapper">
+                    <LoginButton class="right-loggin-button" hasText />
+                </li>
+            </ul>
+        </div>
+    </ProdDev>
+
+    <style lang="scss">
+        @use "@styles/fn" as *;
+
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            height: 100%;
+            padding: var(--header-padding-horizontal)
+                var(--header-padding-vertical) var(--header-padding-horizontal)
+                0;
+
+            @include small-tablet {
+                padding: 0 var(--header-padding-horizontal) 0 0;
+            }
+        }
+        .nav-wrapper {
+            position: fixed;
+            visibility: hidden;
+            top: var(--header-height);
+            right: 0;
+            bottom: 0;
+            width: 100vw;
+            z-index: 1001;
+            max-width: 480px;
+            height: calc(100vh - var(--header-height));
+            @include small-tablet {
+                visibility: visible;
+                position: static;
+                width: 100%;
+                max-width: 100%;
+                height: 100%;
+            }
+        }
+        .nav-wrapper > ul {
+            visibility: hidden;
+            width: 100%;
+            height: 100%;
+            background-color: var(--primary-color);
+            overflow-y: auto;
+            overflow-x: hidden;
+            transform: translate3d(100%, 0, 0);
+            transition:
+                transform 0.3s ease-in-out,
+                visibility 0.3s ease-in-out 0.3s;
+
+            @include small-tablet {
+                visibility: visible;
+                overflow: visible;
+                display: flex;
+                transform: unset;
+                background-color: transparent;
+                align-items: center;
+                justify-content: flex-end;
+            }
+        }
+        :global(.main-header.open) .nav-wrapper > ul {
+            display: block;
+            visibility: visible;
+            transform: translate3d(0, 0, 0);
+            transition:
+                transform 0.3s ease-in-out,
+                visibility 0.3s ease-in-out;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-wrapper > ul > li {
+            @include small-tablet {
+                height: 100%;
+            }
+        }
+
+        ul a,
+        ul a:visited,
+        ul a:active,
+        ul a:link,
+        ul button {
+            background: none;
+            border: none;
+            color: var(--primary-color-foreground);
+            font-size: inherit;
+            font-family: inherit;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            font-weight: 500;
+            display: block;
+            padding: 16px 32px;
+            border-bottom: 1px solid var(--primary-color-foreground);
+            text-decoration: none;
+
+            @include small-tablet {
+                border-bottom: none;
+                height: 100%;
+                font-size: clamp(16px, 1.8vw, 32px);
+                padding: 0 8px;
+                color: var(--text-color);
+                display: flex;
+                align-items: center;
+            }
+            @include tablet {
+                padding: 0 16px;
+            }
+        }
+
+        ul a:hover,
+        ul a:focus,
+        ul button:hover,
+        ul button:focus {
+            background-color: var(--primary-color-foreground);
+            color: var(--text-color);
+            @include small-tablet {
+                background-color: transparent;
+                color: var(--primary-color);
+            }
+        }
+
+        .nav-wrapper > ul > li > a.cd-menu-selected,
+        .nav-wrapper > ul > li > button.cd-menu-selected,
+        ul a.cd-menu-active,
+        ul button.cd-menu-active {
+            background-color: var(--primary-color-foreground);
+            color: var(--primary-color);
+
+            @include small-tablet {
+                background-color: transparent;
+            }
+
+            &:hover {
+                opacity: 0.6;
+            }
+        }
+
+        ul button[aria-haspopup] {
+            @include mobile-only {
+                display: flex;
+                justify-content: space-between;
+            }
+        }
+        button[aria-haspopup] i {
+            transform: rotate(0deg);
+            transition: transform 0.3s ease-in-out;
+            padding: 0 4px;
+            @include tablet {
+                padding: 0 8px;
+            }
+        }
+
+        button[aria-haspopup][aria-expanded="true"] i {
+            transform: rotate(180deg);
+        }
+
+        .sub-menu {
+            margin-left: 32px;
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.3s ease-in-out;
+            & > ul {
+                overflow: hidden;
+            }
+            &:has(.cd-menu-active) {
+                grid-template-rows: 1fr;
+            }
+            @include small-tablet {
+                margin-left: 0;
+                position: absolute;
+
+                & > ul {
+                    background-color: var(--primary-color);
+                    visibility: visible;
+                    border-radius: 0 0 16px 16px;
+                }
+            }
+        }
+
+        .nav-wrapper > ul > li > .sub-menu {
+            @include small-tablet {
+                position: fixed;
+                top: 100%;
+                right: 0;
+                left: 0;
+                padding: 0 32px;
+                visibility: hidden;
+                z-index: 1001;
+
+                & ul {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 8px;
+
+                    & a,
+                    & a:visited,
+                    & a:active,
+                    & a:link,
+                    & button {
+                        color: var(--primary-color-foreground);
+                        padding: 4px 16px;
+                        margin: 4px 0;
+                        font-size: 16px;
+                        border-radius: 0 8px;
+                    }
+                    & a:hover,
+                    & a:focus,
+                    & button:hover,
+                    & a.cd-menu-active,
+                    & button.cd-menu-active {
+                        background-color: var(--primary-color-foreground);
+                        color: var(--text-color);
+                    }
+                    & a::before,
+                    & button::before {
+                        display: none;
+                    }
+                }
+            }
+        }
+
+        button[aria-expanded="true"] ~ .sub-menu {
+            grid-template-rows: 1fr;
+        }
+        button[aria-expanded="false"] ~ .sub-menu {
+            grid-template-rows: 0fr;
+        }
+
+        .sub-menu a,
+        .sub-menu button {
+            padding: 16px;
+            position: relative;
+            border: none;
+
+            &::before {
+                content: "";
+                display: block;
+                position: absolute;
+                height: 100%;
+                width: 8px;
+                left: 0;
+                top: 0;
+                border-left: 1px solid var(--primary-color-foreground);
+                background-image: linear-gradient(
+                    to bottom,
+                    transparent 49%,
+                    var(--primary-color-foreground) 49.5%,
+                    var(--primary-color-foreground) 51%,
+                    transparent 51%
+                );
+            }
+
+            &.cd-menu-active::before {
+                border-left: none;
+                background-image: linear-gradient(
+                    to bottom,
+                    transparent 49%,
+                    var(--primary-color) 49.5%,
+                    var(--primary-color) 51%,
+                    transparent 51%
+                );
+            }
+        }
+
+        a.mobile-login {
+            @include small-tablet {
+                display: none;
+            }
+        }
+
+        .login-wrapper {
+            @include small-tablet {
+                padding-left: 8px !important;
+            }
+        }
+        a.right-loggin-button {
+            position: relative;
+        }
+        a.right-loggin-button::before {
+            @include small-tablet {
+                content: "";
+                display: block;
+                position: absolute;
+                height: 100%;
+                width: 1px;
+                left: 0px;
+                top: 0;
+                background-image: linear-gradient(
+                    to bottom,
+                    transparent 30%,
+                    var(--text-color) 40%,
+                    var(--text-color) 60%,
+                    transparent 70%
+                );
+                opacity: 0.5;
+            }
+        }
+    </style>
+</nav>
+
+<script>
+    document.addEventListener("astro:page-load", () => {
+        const menuButtons = document.querySelectorAll(".nav-wrapper button");
+        menuButtons.forEach((button) => {
+            button.addEventListener("click", (e) => {
+                menuButtons.forEach((btn) => {
+                    if (btn !== button) {
+                        btn.setAttribute("aria-expanded", "false");
+                    }
+                });
+                button.setAttribute(
+                    "aria-expanded",
+                    button.getAttribute("aria-expanded") === "true"
+                        ? "false"
+                        : "true",
+                );
+            });
+        });
+    });
+</script>

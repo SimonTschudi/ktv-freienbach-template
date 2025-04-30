@@ -1,0 +1,15 @@
+---
+import MElement from "@components/mustache/MElement.astro";
+import MVar from "@components/mustache/MVar.astro";
+---
+
+<MElement
+    as="a"
+    tpAttr={['{{#inNewWindow}}target="_blank"{{/inNewWindow}}']}
+    href="{{url}}{{params}}"
+    data-id="{{id}}"
+    data-parent-id="{{parentId}}"
+    class="menu-item {{#active}}cd-menu-active{{/active}} {{#selected}}cd-menu-selected{{/selected}} {{^children.empty}}cd-menu-expand{{/children.empty}}"
+>
+    <MVar tp="title" defaultValue="Home" />
+</MElement>

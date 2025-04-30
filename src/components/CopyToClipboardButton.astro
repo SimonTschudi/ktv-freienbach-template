@@ -1,0 +1,76 @@
+---
+import { ulid } from "ulid";
+
+interface Props {
+  componentName: string;
+  className: string;
+}
+const { componentName, className } = Astro.props as Props;
+const id = ulid();
+---
+
+<button id={id} class="copy-snippet" aria-label="Copy Snippet">Copy</button>
+<style>
+  .copy-snippet {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 0;
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: bold;
+  }
+
+  .copy-snippet:hover {
+    background-color: #45a049;
+  }
+</style>
+
+<script define:vars={{ componentName, className, id }}>
+  const button = document.getElementById(id);
+
+  button.addEventListener("click", async () => {
+    const snippet = document.querySelector(componentName)?.outerHTML;
+    const snippetScript = String(customElements.get(componentName));
+
+    if (!snippet) {
+      button.textContent = "Error: Nothing to copy";
+      button.style.backgroundColor = "#d32f2f"; // Red for failure
+      return;
+    }
+
+    const text = [
+      snippet,
+      "<script>",
+      snippetScript,
+      "if (!customElements.get('",
+      componentName,
+      "')){ customElements.define('",
+      componentName,
+      "', ",
+      className,
+      ");}<",
+      "/script>",
+    ].join("");
+
+    try {
+      await navigator.clipboard.writeText(text);
+      button.textContent = "Copied!";
+      button.style.backgroundColor = "#4caf50"; // Green for success
+    } catch (err) {
+      console.error("Failed to copy:", err);
+      button.textContent = "Copy failed!";
+      button.style.backgroundColor = "#d32f2f"; // Red for failure
+    }
+
+    setTimeout(() => {
+      button.textContent = "Copy";
+      button.style.backgroundColor = "#4caf50"; // Reset color
+    }, 2000); // Reset after 2 seconds
+  });
+</script>

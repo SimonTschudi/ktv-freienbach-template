@@ -1,0 +1,118 @@
+---
+import Navigation from "./Navigation.astro";
+import Logo from "@assets/logo.svg";
+import LogoText from "@assets/logo-text.svg";
+---
+
+<div class="scroll-spy"></div>
+<header class="main-header">
+    <a href="{{{homePath}}}">
+        <div class="svg-wrapper">
+            <Logo class="logo" aria-label="KTV Freienbach Logo" />
+        </div>
+        <div class="svg-wrapper">
+            <LogoText class="logo-text" aria-label="KTV Freienbach" />
+        </div>
+    </a>
+    <Navigation />
+</header>
+
+<style lang="scss">
+    @use "@styles/fn" as *;
+    header {
+        display: grid;
+        height: var(--header-height);
+        grid-template-columns: minmax(min-content, 1fr) 2fr;
+        background-color: transparent;
+        backdrop-filter: blur(10px) opacity(0);
+        box-shadow: 0 2px 4px transparent;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+        transition:
+            background-color 0.3s ease-in-out,
+            box-shadow 0.3s ease-in-out,
+            backdrop-filter 0.3s ease-in-out;
+    }
+    header.open {
+        background-color: var(--header-background-color);
+        box-shadow: 0 2px 4px var(--shadow-color-light);
+        backdrop-filter: blur(10px) opacity(1);
+        @include small-tablet {
+            background-color: transparent;
+            box-shadow: 0 2px 4px transparent;
+            backdrop-filter: blur(10px) opacity(0);
+        }
+    }
+    header.scrolled,
+    :global(.main-header:has(button[aria-expanded="true"])) {
+        background-color: var(--header-background-color);
+        box-shadow: 0 2px 4px var(--shadow-color-light);
+        backdrop-filter: blur(10px) opacity(1);
+    }
+    header a {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        width: 100%;
+        padding: var(--header-padding-vertical) var(--header-padding-horizontal);
+        @include small-mobile {
+            gap: 0;
+        }
+
+        @include small-tablet {
+            gap: 0;
+        }
+
+        @include tablet {
+            gap: 32px;
+        }
+    }
+    .svg-wrapper {
+        height: 100%;
+        display: flex;
+        align-items: center;
+    }
+    .logo {
+        height: 100%;
+        overflow: visible;
+        @include small-mobile {
+            display: none;
+        }
+
+        @include small-tablet {
+            display: none;
+        }
+        @include tablet {
+            display: block;
+        }
+    }
+    .logo-text {
+        min-width: 220px;
+        max-width: 30vw;
+        @include small-mobile {
+            min-width: 200px;
+        }
+
+        @include desktop {
+            height: 1.5vw;
+            max-height: 40px;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener("astro:page-load", () => {
+        const scrollSpy = document.querySelector(".scroll-spy");
+        const header = document.querySelector(".main-header") as HTMLElement;
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                header.classList.toggle("scrolled", !entry.isIntersecting);
+            },
+            { rootMargin: `64px 0px 0px 0px` },
+        );
+        observer.observe(scrollSpy);
+    });
+</script>

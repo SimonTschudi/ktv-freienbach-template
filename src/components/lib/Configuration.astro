@@ -1,0 +1,125 @@
+---
+import CheckboxConfig from "./CheckboxConfig.astro";
+import type { Config } from "./Config";
+import InputConfig from "./InputConfig.astro";
+import TinyEditorConfig from "./TinyEditorConfig.astro";
+import { ulid } from "ulid";
+interface Props {
+    componentName: string;
+    config: Record<string, Config>;
+}
+const { componentName, config } = Astro.props as Props;
+
+const id = ulid();
+---
+
+<div id={id} class="config">
+    <button>
+        <h2>Config</h2>
+    </button>
+    <div class="config-content">
+        <div class="config-wrapper">
+            {
+                Object.values(config).map((c) => {
+                    switch (c.type) {
+                        case "text":
+                        case "color":
+                        case "datetime-local":
+                            return (
+                                <InputConfig
+                                    componentName={componentName}
+                                    config={c}
+                                />
+                            );
+                        case "checkbox":
+                            return (
+                                <CheckboxConfig
+                                    componentName={componentName}
+                                    config={c}
+                                />
+                            );
+                        case "content":
+                            return (
+                                <TinyEditorConfig
+                                    componentName={componentName}
+                                    config={c}
+                                />
+                            );
+
+                        default:
+                            return null;
+                    }
+                })
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        font-size: inherit;
+        color: inherit;
+    }
+    button > h2::after {
+        content: "▼";
+        font-size: 12px;
+        margin-left: 8px;
+        transform: rotate(0deg);
+        display: inline-block;
+        font-size: 18px;
+        transition: transform 0.3s ease-in-out;
+    }
+    button:hover {
+        color: #007bff;
+        background-color: #f0f0f0;
+    }
+    .config {
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 16px;
+        margin: 16px;
+        background-color: #f9f9f9;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        position: relative;
+    }
+
+    .config-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-in-out;
+    }
+
+    .config-wrapper {
+        display: flex;
+        flex-direction: column;
+        padding: 16px;
+        gap: 8px;
+    }
+    .config.open > .config-content {
+        max-height: 1000px; /* Arbitrary large value */
+    }
+
+    .config.open button > h2::after {
+        transform: rotate(180deg);
+    }
+
+    h2 {
+        font-size: 20px;
+        margin-bottom: 8px;
+        cursor: pointer;
+    }
+</style>
+
+<script define:vars={{ id }}>
+    const root = document.getElementById(id);
+    const h2 = root.querySelector("button");
+    h2.addEventListener("click", () => {
+        root.classList.toggle("open");
+    });
+</script>

@@ -1,0 +1,13 @@
+---
+import { isProd } from "@utils/Global.utils";
+
+interface Props {
+    tp: string;
+}
+const { tp } = Astro.props as Props;
+---
+
+<>
+    {isProd && `{{{${tp}}}}`}
+    {!isProd && <slot />}
+</>

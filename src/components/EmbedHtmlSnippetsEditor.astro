@@ -1,0 +1,100 @@
+---
+
+---
+
+<div id="embed-html-snippets-editor"></div>
+
+<style lang="scss" is:global>
+    #embed-html-snippets-editor {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+        backdrop-filter: blur(10px);
+        z-index: 99999998;
+        display: none;
+        & .embed-html-snippets-editor {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            max-width: 700px;
+            height: 100dvh;
+            z-index: 99999998;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        &.show {
+            display: block;
+        }
+    }
+    .embed-html-snippets-editor-button {
+        position: fixed;
+        top: 16px;
+        right: 16px;
+        background-color: var(--secondary-color);
+        color: var(--secondary-color-foreground);
+        border: none;
+        border-radius: 8px;
+        padding: 8px 16px;
+        cursor: pointer;
+        z-index: 99999999;
+        transition: all 0.3s ease-in-out;
+
+        &:hover {
+            background-color: var(--secondary-color);
+            color: var(--secondary-color-foreground);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transform: scale(1.05);
+        }
+    }
+    body.embed-html-snippets-editor-open {
+        overflow: hidden;
+    }
+</style>
+
+<script type="text/javascript">
+    if (
+        !!Array.from(document.querySelectorAll("script")).find((s) =>
+            s.src?.includes("dnd.js"),
+        )
+    ) {
+        const wrapper = document.querySelector("#embed-html-snippets-editor");
+        const body = document.querySelector("body");
+        const iframe = document.createElement("iframe");
+        iframe.className = "embed-html-snippets-editor";
+        iframe.loading = "lazy";
+        wrapper.append(iframe);
+
+        const button = document.createElement("button");
+        button.className = "embed-html-snippets-editor-button";
+        button.innerText = "Embed HTML Snippets";
+        button.onclick = (ev) => {
+            ev.preventDefault();
+            ev.stopPropagation();
+            wrapper.classList.toggle("show");
+            body.classList.toggle("embed-html-snippets-editor-open");
+            body.classList.toggle("is-editing-block");
+            iframe.src = "/clubdesk/genwwwfiles/snippets.html";
+            button.innerText = wrapper.classList.contains("show")
+                ? "Close Snippets"
+                : "Embed HTML Snippets";
+        };
+        button.onmouseover = (ev) => {
+            ev.preventDefault();
+            ev.stopPropagation();
+            body.classList.toggle("is-editing-block", true);
+        };
+        button.onmouseout = (ev) => {
+            ev.preventDefault();
+            ev.stopPropagation();
+            body.classList.toggle(
+                "is-editing-block",
+                wrapper.classList.contains("show"),
+            );
+        };
+        wrapper.before(button);
+    }
+</script>

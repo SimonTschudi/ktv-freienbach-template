@@ -1,0 +1,73 @@
+---
+import { type Config } from "./Config";
+import { ulid } from "ulid";
+
+interface Props {
+    componentName: string;
+    config: Config;
+}
+const { componentName, config } = Astro.props as Props;
+const { label, name, type, defaultValue } = config;
+const id = ulid();
+---
+
+<div class="content-config">
+    <label for={id} class="label">
+        {label}
+    </label>
+    <div id={id} data-tiny-editor class="tiny-editor" data-fontname="no"></div>
+</div>
+<style>
+    .content-config {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .tiny-editor {
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 8px;
+        min-height: 100px;
+    }
+
+    .label {
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+    .tiny-editor {
+        padding: 8px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+    }
+</style>
+<script define:vars={{ id, defaultValue }}>
+    function decodeHTML(str) {
+        let temp = document.createElement("textarea");
+        temp.innerHTML = str;
+        return temp.value;
+    }
+    const tinyEditor = document.getElementById(id);
+
+    tinyEditor.innerHTML = decodeHTML(defaultValue);
+</script>
+<script>
+    import "tiny-editor";
+</script>
+<script define:vars={{ id, componentName, name }}>
+    function encodeHTML(str) {
+        return str
+            .replace(/&/g, "&amp;") // Encode '&' first to avoid double encoding
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+    }
+
+    const tinyEditor = document.getElementById(id);
+    tinyEditor.addEventListener("input", (event) => {
+        document
+            .querySelector(componentName)
+            .setAttribute(name, encodeHTML(event.target.innerHTML));
+    });
+</script>

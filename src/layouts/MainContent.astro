@@ -1,0 +1,27 @@
+---
+import MIf from "@components/mustache/MIf.astro";
+import MIfNot from "@components/mustache/MIfNot.astro";
+import MTemplate from "@components/mustache/MTemplate.astro";
+---
+
+<MIf tp="sidebar">
+    <div class="columns-wrapper">
+        <div class="columns-margins"></div>
+        <div class="columns">
+            <div class="content-wrapper">
+                <slot />
+            </div>
+
+            <aside class="sidebar-wrapper">
+                <MTemplate tp="sidebar" />
+            </aside>
+        </div>
+        <div class="columns-margins"></div>
+    </div>
+</MIf>
+
+<MIfNot tp="sidebar" isNot>
+    <div class="content-wrapper">
+        <slot />
+    </div>
+</MIfNot>
