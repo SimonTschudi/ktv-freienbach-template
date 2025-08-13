@@ -47,5 +47,24 @@ All commands are run from the root of the project, from a terminal:
 
 Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
 
-## Install Extension to get the layout
-https://microsoftedge.microsoft.com/addons/detail/cors-unblock/hkjklmhkbkdhlgnnfbbcihcajofmjgbh?hl=de
+## ClubDesk Integration
+
+This project includes a proxy setup to resolve CORS issues when accessing ClubDesk resources during development. 
+
+### Development Proxy
+
+The development server includes a proxy at `/remote/www` that forwards requests to `https://www.ktvfreienbach.ch`. This eliminates the need for browser CORS extensions during development.
+
+**How it works:**
+- All ClubDesk resources (CSS, JS, images) are accessed via `/remote/www/*` paths
+- The proxy automatically forwards these requests to the ClubDesk domain
+- CORS headers are handled by the proxy, avoiding browser restrictions
+
+### Production Build
+
+In production builds, the `getURL()` utility function returns the original ClubDesk paths, ensuring resources load directly from ClubDesk servers.
+
+~~## Install Extension to get the layout~~
+~~https://microsoftedge.microsoft.com/addons/detail/cors-unblock/hkjklmhkbkdhlgnnfbbcihcajofmjgbh?hl=de~~
+
+*Note: The CORS extension is no longer needed thanks to the integrated proxy solution.*

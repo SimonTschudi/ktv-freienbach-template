@@ -7,6 +7,7 @@ import ProdDev from "@components/mustache/ProdDev.astro";
 import MenuToggleButton from "@components/header/MenuToggleButton.astro";
 import LoginButton from "@components/header/LoginButton.astro";
 import MenuAnchorElement from "@components/header/MenuAnchorElement.astro";
+import ExternalLinkIcon from "@assets/external.svg";
 ---
 
 <nav>
@@ -15,6 +16,9 @@ import MenuAnchorElement from "@components/header/MenuAnchorElement.astro";
     <ProdDev>
         <div slot="prod" class="nav-wrapper">
             <ul role="menu">
+                <li class="menu-home" role="menuitem">
+                    <a href="{{{homePath}}}" class="menu-item menu-home">Home</a>
+                </li>
                 <MIf tp="menuItems" isTrue>
                     <li role="menuitem">
                         <MIf tp="children.empty" isTrue>
@@ -76,6 +80,9 @@ import MenuAnchorElement from "@components/header/MenuAnchorElement.astro";
                                                     data-parent-id="{{parentId}}"
                                                     class="menu-item {{#active}}cd-menu-active{{/active}} {{#selected}}cd-menu-selected{{/selected}} {{^children.empty}}cd-menu-expand{{/children.empty}}"
                                                 >
+                                                    <MIf tp="inNewWindow">
+                                                        <ExternalLinkIcon class="external-icon"></ExternalLinkIcon>
+                                                    </MIf>
                                                     <MVar
                                                         tp="title"
                                                         defaultValue="Home"
@@ -103,13 +110,11 @@ import MenuAnchorElement from "@components/header/MenuAnchorElement.astro";
                                                 <div class="sub-menu">
                                                     <ul>
                                                         <li>
-                                                            <MenuAnchorElement
-                                                            />
+                                                            <MenuAnchorElement />
                                                         </li>
                                                         <MIf tp="children">
                                                             <li>
-                                                                <MenuAnchorElement
-                                                                />
+                                                                <MenuAnchorElement />
                                                             </li>
                                                         </MIf>
                                                     </ul>
@@ -160,7 +165,7 @@ import MenuAnchorElement from "@components/header/MenuAnchorElement.astro";
                             </li>
                             <li>
                                 <a role="menuitem" class="menu-item" href="#"
-                                    >Statuten</a
+                                    ><ExternalLinkIcon class="external-icon"></ExternalLinkIcon>Statuten</a
                                 >
                             </li>
                         </ul>
@@ -191,7 +196,7 @@ import MenuAnchorElement from "@components/header/MenuAnchorElement.astro";
                     </div>
                 </li>
                 <li>
-                    <a role="menuitem" class="menu-item" href="#">News</a>
+                    <a role="menuitem" class="menu-item" href="#"><ExternalLinkIcon class="external-icon"></ExternalLinkIcon>News</a>
                 </li>
                 <li class="login-wrapper">
                     <LoginButton class="right-loggin-button" hasText />
@@ -285,6 +290,7 @@ import MenuAnchorElement from "@components/header/MenuAnchorElement.astro";
             background: none;
             border: none;
             color: var(--primary-color-foreground);
+            fill: var(--primary-color-foreground);
             font-size: inherit;
             font-family: inherit;
             cursor: pointer;
@@ -299,9 +305,10 @@ import MenuAnchorElement from "@components/header/MenuAnchorElement.astro";
             @include small-tablet {
                 border-bottom: none;
                 height: 100%;
-                font-size: clamp(16px, 1.8vw, 32px);
+                font-size: clamp(16px, 1.8vw, 28px);
                 padding: 0 8px;
                 color: var(--text-color);
+                fill: var(--text-color);
                 display: flex;
                 align-items: center;
             }
@@ -316,9 +323,29 @@ import MenuAnchorElement from "@components/header/MenuAnchorElement.astro";
         ul button:focus {
             background-color: var(--primary-color-foreground);
             color: var(--text-color);
+            fill: var(--text-color);
             @include small-tablet {
                 background-color: transparent;
                 color: var(--primary-color);
+                fill: var(--primary-color);
+            }
+        }
+
+        a .external-icon {
+            width: 14px;
+            margin-right: 8px;
+            fill: inherit;
+            vertical-align: middle;
+            @include small-tablet {
+                width: 16px;
+            }
+        }
+        .sub-menu a .external-icon {
+            width: 14px;
+            margin-right: 8px;
+            @include small-tablet {
+                width: 12px;
+                margin-right: 4px;
             }
         }
 
@@ -394,6 +421,7 @@ import MenuAnchorElement from "@components/header/MenuAnchorElement.astro";
                     display: flex;
                     align-items: center;
                     justify-content: center;
+                    flex-wrap: wrap;
                     gap: 8px;
 
                     & a,
@@ -402,6 +430,7 @@ import MenuAnchorElement from "@components/header/MenuAnchorElement.astro";
                     & a:link,
                     & button {
                         color: var(--primary-color-foreground);
+                        fill: var(--primary-color-foreground);
                         padding: 4px 16px;
                         margin: 4px 0;
                         font-size: 16px;
@@ -414,6 +443,7 @@ import MenuAnchorElement from "@components/header/MenuAnchorElement.astro";
                     & button.cd-menu-active {
                         background-color: var(--primary-color-foreground);
                         color: var(--text-color);
+                        fill: var(--text-color);
                     }
                     & a::before,
                     & button::before {
@@ -499,14 +529,24 @@ import MenuAnchorElement from "@components/header/MenuAnchorElement.astro";
                 opacity: 0.5;
             }
         }
+
+        .menu-home, a.menu-home {
+            @include small-tablet {
+                display: none;
+            }
+        }
     </style>
 </nav>
 
 <script>
     document.addEventListener("astro:page-load", () => {
+        const navigation = document.querySelector("nav");
+        
+        // Handle menu button clicks
         const menuButtons = document.querySelectorAll(".nav-wrapper button");
         menuButtons.forEach((button) => {
             button.addEventListener("click", (e) => {
+                e.stopPropagation(); // Prevent triggering outside click
                 menuButtons.forEach((btn) => {
                     if (btn !== button) {
                         btn.setAttribute("aria-expanded", "false");
@@ -520,5 +560,48 @@ import MenuAnchorElement from "@components/header/MenuAnchorElement.astro";
                 );
             });
         });
+
+        // Handle clicks outside navigation
+        document.addEventListener("click", (e) => {
+            // Check if click is outside the navigation
+            if (navigation && e.target && !navigation.contains(e.target as Node)) {
+                // Find currently open sub-menu(s)
+                const openButtons = Array.from(menuButtons).filter(btn => 
+                    btn.getAttribute("aria-expanded") === "true"
+                );
+                
+                // Find which sub-menu should be open based on active items
+                let targetButtonToOpen: Element | null = null;
+                
+                menuButtons.forEach((button) => {
+                    // Find the sub-menu associated with this button
+                    const subMenu = button.parentElement?.querySelector(".sub-menu");
+                    if (subMenu) {
+                        // Check if this sub-menu has any active items
+                        const hasActiveItems = subMenu.querySelector(".cd-menu-active");
+                        if (hasActiveItems) {
+                            targetButtonToOpen = button;
+                        }
+                    }
+                });
+                
+                // Close all currently open sub-menus first
+                openButtons.forEach((button) => {
+                    button.setAttribute("aria-expanded", "false");
+                });
+                
+                // If there's a sub-menu that should be open, open it
+                if (targetButtonToOpen) {
+                    targetButtonToOpen.setAttribute("aria-expanded", "true");
+                }
+            }
+        });
+
+        // Prevent clicks inside navigation from bubbling up
+        if (navigation) {
+            navigation.addEventListener("click", (e) => {
+                e.stopPropagation();
+            });
+        }
     });
 </script>

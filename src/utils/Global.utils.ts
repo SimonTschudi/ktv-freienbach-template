@@ -3,7 +3,7 @@ export const isDev = import.meta.env.DEV;
 
 export const getURL = (path: string) => {
     if (isDev) {
-        return 'https://testvereinsname.clubdesk.com' + path;
+        return '/remote/www' + path;
     }
     return path;
 };

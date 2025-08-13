@@ -1,3 +1,5 @@
+@use "@styles/fn" as *;
+
 a,
 input,
 button {
@@ -33,12 +35,27 @@ button {
     margin: 0 auto;
 }
 
-.cd-row,
-.cd-section,
-.cd-section-content.cd-full-width .cd-row {
+.cd-section {
     max-width: var(--max-content-width);
     padding: 16px;
     margin: 0 auto;
+}
+
+.cd-block .cd-block-content {
+    padding: 0;
+    @include small-tablet {
+        padding: 0 10px;
+    }
+}
+
+.cd-row,
+.cd-section-content.cd-full-width .cd-row {
+    padding: 16px 0;
+    max-width: var(--max-content-width);
+    margin: 0 auto;
+    @include small-tablet {
+        padding: 16px;
+    }
 }
 
 .cc-banner {
@@ -122,5 +139,50 @@ button {
     & .cd-tile-h-main-heading {
         color: #d3edff
     }
+}
 
+.cc-window.cc-banner,
+.cc-window.cc-floating {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px);
+    width: auto;
+    max-width: unset;
+    flex-direction: row;
+    align-items: center;
+    border-radius: 22px 22px 0 0;
+    padding: 6px 6px 4px;
+    &.cc-message {
+        margin-bottom: unset;
+    }
+    &.cc-bottom {
+        bottom: 0;
+        left: 16px;
+        right: 16px;
+        @include small-tablet {
+            left: 32px;
+            right: 32px;
+        }
+    }
+
+    .cc-btn {
+        border-radius: 0 16px;
+    }
+}
+.cc-revoke {
+    background: rgba(182, 209, 227, 0.5);
+    border-top: 1px solid rgb(182, 209, 227);
+    backdrop-filter: blur(10px);
+    font-size: 11px;
+    padding: 2px 4px;
+    transition: bottom 0.3s, opacity 0.3s;
+    &:hover {
+        &.cc-bottom {
+            bottom: 0;
+        }
+    }
+    &.cc-bottom {
+        bottom: -3px;
+        left: unset;
+        right: 4px;
+    }
 }
