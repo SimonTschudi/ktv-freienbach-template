@@ -4,7 +4,6 @@ import Footer from "./Footer.astro";
 import MainContent from "./MainContent.astro";
 import Header from "./Header.astro";
 import ClubDeskSkripts from "./ClubDeskSkripts.astro";
-import { ClientRouter } from "astro:transitions";
 import stylesUrl from "../styles/page.scss?url";
 import { getURL, isProd } from "@utils/Global.utils";
 import MainHeader from "./MainHeader.astro";
@@ -127,7 +126,6 @@ const title = isProd ? "{{title}}" : "KTV Freienbach | Home";
 		<link rel="icon" href="genwwwfiles/favicon.png" />
 		<link rel="icon" href="genwwwfiles/favicon.svg" type="image/svg+xml" />
 		<MTemplate tp="fragmentHeadEnd" />
-		<ClientRouter />
 	</head>
 	<body class="{{{bodyClasses}}}">
 		<MTemplate tp="fragmentBodyStart" />
@@ -155,6 +153,7 @@ const title = isProd ? "{{title}}" : "KTV Freienbach | Home";
 
 <style lang="scss" is:global>
 	@use "@styles/fn" as *;
+	@use "@styles/view-transition.scss";
 	:root {
 		--header-height: 64px;
 		--header-height-small: 40px;
@@ -169,6 +168,7 @@ const title = isProd ? "{{title}}" : "KTV Freienbach | Home";
 		--primary-color-foreground: var(--background-color);
 		--secondary-color-foreground: var(--text-color);
 		--max-content-width: 1200px;
+		--border-radius: 8px;
 		@include small-tablet {
 			--header-height: 128px;
 			--header-height-small: 64px;

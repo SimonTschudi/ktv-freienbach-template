@@ -539,69 +539,67 @@ import ExternalLinkIcon from "@assets/external.svg";
 </nav>
 
 <script>
-    document.addEventListener("astro:page-load", () => {
-        const navigation = document.querySelector("nav");
-        
-        // Handle menu button clicks
-        const menuButtons = document.querySelectorAll(".nav-wrapper button");
-        menuButtons.forEach((button) => {
-            button.addEventListener("click", (e) => {
-                e.stopPropagation(); // Prevent triggering outside click
-                menuButtons.forEach((btn) => {
-                    if (btn !== button) {
-                        btn.setAttribute("aria-expanded", "false");
-                    }
-                });
-                button.setAttribute(
-                    "aria-expanded",
-                    button.getAttribute("aria-expanded") === "true"
-                        ? "false"
-                        : "true",
-                );
-            });
-        });
-
-        // Handle clicks outside navigation
-        document.addEventListener("click", (e) => {
-            // Check if click is outside the navigation
-            if (navigation && e.target && !navigation.contains(e.target as Node)) {
-                // Find currently open sub-menu(s)
-                const openButtons = Array.from(menuButtons).filter(btn => 
-                    btn.getAttribute("aria-expanded") === "true"
-                );
-                
-                // Find which sub-menu should be open based on active items
-                let targetButtonToOpen: Element | null = null;
-                
-                menuButtons.forEach((button) => {
-                    // Find the sub-menu associated with this button
-                    const subMenu = button.parentElement?.querySelector(".sub-menu");
-                    if (subMenu) {
-                        // Check if this sub-menu has any active items
-                        const hasActiveItems = subMenu.querySelector(".cd-menu-active");
-                        if (hasActiveItems) {
-                            targetButtonToOpen = button;
-                        }
-                    }
-                });
-                
-                // Close all currently open sub-menus first
-                openButtons.forEach((button) => {
-                    button.setAttribute("aria-expanded", "false");
-                });
-                
-                // If there's a sub-menu that should be open, open it
-                if (targetButtonToOpen) {
-                    targetButtonToOpen.setAttribute("aria-expanded", "true");
+    const navigation = document.querySelector("nav");
+    
+    // Handle menu button clicks
+    const menuButtons = document.querySelectorAll(".nav-wrapper button");
+    menuButtons.forEach((button) => {
+        button.addEventListener("click", (e) => {
+            e.stopPropagation(); // Prevent triggering outside click
+            menuButtons.forEach((btn) => {
+                if (btn !== button) {
+                    btn.setAttribute("aria-expanded", "false");
                 }
-            }
-        });
-
-        // Prevent clicks inside navigation from bubbling up
-        if (navigation) {
-            navigation.addEventListener("click", (e) => {
-                e.stopPropagation();
             });
+            button.setAttribute(
+                "aria-expanded",
+                button.getAttribute("aria-expanded") === "true"
+                    ? "false"
+                    : "true",
+            );
+        });
+    });
+
+    // Handle clicks outside navigation
+    document.addEventListener("click", (e) => {
+        // Check if click is outside the navigation
+        if (navigation && e.target && !navigation.contains(e.target as Node)) {
+            // Find currently open sub-menu(s)
+            const openButtons = Array.from(menuButtons).filter(btn => 
+                btn.getAttribute("aria-expanded") === "true"
+            );
+            
+            // Find which sub-menu should be open based on active items
+            let targetButtonToOpen: Element | null = null;
+            
+            menuButtons.forEach((button) => {
+                // Find the sub-menu associated with this button
+                const subMenu = button.parentElement?.querySelector(".sub-menu");
+                if (subMenu) {
+                    // Check if this sub-menu has any active items
+                    const hasActiveItems = subMenu.querySelector(".cd-menu-active");
+                    if (hasActiveItems) {
+                        targetButtonToOpen = button;
+                    }
+                }
+            });
+            
+            // Close all currently open sub-menus first
+            openButtons.forEach((button) => {
+                button.setAttribute("aria-expanded", "false");
+            });
+            
+            // If there's a sub-menu that should be open, open it
+            if (targetButtonToOpen) {
+                targetButtonToOpen.setAttribute("aria-expanded", "true");
+            }
         }
     });
+
+    // Prevent clicks inside navigation from bubbling up
+    if (navigation) {
+        navigation.addEventListener("click", (e) => {
+            e.stopPropagation();
+        });
+    }
 </script>

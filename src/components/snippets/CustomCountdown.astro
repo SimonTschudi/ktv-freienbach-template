@@ -24,7 +24,7 @@ function getRoundedFutureTime(days) {
     return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
 }
 
-const defaultConfig: Record<string, Config> = {
+const getDefaultConfig: () => Record<string, Config> = () => ({
     "end-date": {
         label: "End Date",
         name: "end-date",
@@ -73,9 +73,9 @@ const defaultConfig: Record<string, Config> = {
         type: "color",
         defaultValue: brand.textColor,
     },
-};
+});
 
-const defaultProps = Object.values(defaultConfig).reduce(
+const getDefaultProps = () => Object.values(getDefaultConfig()).reduce(
     (acc, { name, defaultValue }) => {
         acc[name] = defaultValue;
         return acc;
@@ -85,11 +85,12 @@ const defaultProps = Object.values(defaultConfig).reduce(
 ---
 
 <Preview componentName="custom-countdown" className="CustomCountdown">
-    <custom-countdown {...defaultProps}> </custom-countdown>
+    <custom-countdown {...getDefaultProps()}> </custom-countdown>
 </Preview>
-<Configuration componentName="custom-countdown" config={defaultConfig} />
+<Configuration componentName="custom-countdown" config={getDefaultConfig()} />
 
 <script is:inline>
+
     // Define the behaviour for our new type of HTML element.
     class CustomCountdown extends HTMLElement {
         static get observedAttributes() {
@@ -122,6 +123,38 @@ const defaultProps = Object.values(defaultConfig).reduce(
             }
         }
 
+        renderExpireMessage() {
+            const { shadowRoot, expireMessage, labelColor, fontSize } = this;
+
+            shadowRoot.innerHTML = "";
+
+            const msg = document.createElement("div");
+            msg.textContent = expireMessage;
+            msg.style.fontSize = fontSize;
+            msg.style.color = labelColor;
+            msg.style.textAlign = "center";
+            msg.style.width = "100%";
+
+            const style = document.createElement("style");
+            style.textContent = `
+                :host {
+                    --font-size: ${fontSize};
+                    --label-color: ${labelColor};
+                    display: flex;
+                    justify-content: center;
+                    color: var(--label-color);
+                }
+                .message {
+                    font-size: var(--font-size);
+                    text-align: center;
+                    width: 100%;
+                }
+            `;
+
+            shadowRoot.appendChild(style);
+            shadowRoot.appendChild(msg);
+        }
+
         render() {
             const {
                 shadowRoot,
@@ -138,21 +171,24 @@ const defaultProps = Object.values(defaultConfig).reduce(
 
             shadowRoot.innerHTML = "";
 
-            const { days, hours, minutes, seconds } = this.useDate(endDateObj);
+            const { days, hours, minutes, seconds, expired } = this.useDate(endDateObj);
 
             const wrapper = document.createElement("div");
             wrapper.classList.add("wrapper");
 
-            wrapper.append(
-                this.createTile("days", "Tage", days),
-                this.createTile("hours", "Stunden", hours, true),
-                this.createTile("minutes", "Minuten", minutes, true),
-            );
-
-            if (!hideSeconds) {
+            if (expired) {
+                this.renderExpireMessage();
+            } else {
                 wrapper.append(
-                    this.createTile("seconds", "Sekunden", seconds, true),
+                    this.createTile("days", "Tage", days),
+                    this.createTile("hours", "Stunden", hours, true),
+                    this.createTile("minutes", "Minuten", minutes, true),
                 );
+                if (!hideSeconds) {
+                    wrapper.append(
+                        this.createTile("seconds", "Sekunden", seconds, true),
+                    );
+                }
             }
 
             const style = document.createElement("style");
@@ -210,11 +246,13 @@ const defaultProps = Object.values(defaultConfig).reduce(
             const _hour = _minute * 60;
             const _day = _hour * 24;
             const diff = date - new Date();
+            const expired = diff <= 0;
             return {
-                days: Math.floor(diff / _day),
-                hours: Math.floor((diff % _day) / _hour),
-                minutes: Math.floor((diff % _hour) / _minute),
-                seconds: Math.floor((diff % _minute) / _second),
+                days: Math.max(0, Math.floor(diff / _day)),
+                hours: Math.max(0, Math.floor((diff % _day) / _hour)),
+                minutes: Math.max(0, Math.floor((diff % _hour) / _minute)),
+                seconds: Math.max(0, Math.floor((diff % _minute) / _second)),
+                expired,
             };
         }
 
@@ -241,17 +279,23 @@ const defaultProps = Object.values(defaultConfig).reduce(
         }
 
         initTimer() {
-            setInterval(() => {
-                const { shadowRoot, endDate, hideSeconds } = this;
+            const intervalNr = setInterval(() => {
+                const { shadowRoot, endDate, hideSeconds, expireMessage, tileForegroundColor, fontSize } = this;
                 const endDateObj = new Date(endDate);
-                const { days, hours, minutes, seconds } =
-                    this.useDate(endDateObj);
-                const tiles = shadowRoot.querySelectorAll(".tile");
-                tiles[0].textContent = String(days);
-                tiles[1].textContent = String(hours).padStart(2, "0");
-                tiles[2].textContent = String(minutes).padStart(2, "0");
-                if (!hideSeconds) {
-                    tiles[3].textContent = String(seconds).padStart(2, "0");
+                const { days, hours, minutes, seconds, expired } = this.useDate(endDateObj);
+                const wrapper = shadowRoot.querySelector('.wrapper');
+                if (!wrapper) return;
+                if (expired) {
+                    this.renderExpireMessage();
+                    clearInterval(intervalNr);
+                } else {
+                    const tiles = wrapper.querySelectorAll('.tile');
+                    tiles[0].textContent = String(days);
+                    tiles[1].textContent = String(hours).padStart(2, '0');
+                    tiles[2].textContent = String(minutes).padStart(2, '0');
+                    if (!hideSeconds) {
+                        tiles[3].textContent = String(seconds).padStart(2, '0');
+                    }
                 }
             }, 1000);
         }

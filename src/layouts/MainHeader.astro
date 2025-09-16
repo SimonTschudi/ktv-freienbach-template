@@ -104,15 +104,13 @@ import LogoText from "@assets/logo-text.svg";
 </style>
 
 <script>
-    document.addEventListener("astro:page-load", () => {
-        const scrollSpy = document.querySelector(".scroll-spy");
-        const header = document.querySelector(".main-header") as HTMLElement;
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                header.classList.toggle("scrolled", !entry.isIntersecting);
-            },
-            { rootMargin: `64px 0px 0px 0px` },
-        );
-        observer.observe(scrollSpy);
-    });
+    const scrollSpy = document.querySelector(".scroll-spy");
+    const header = document.querySelector(".main-header") as HTMLElement;
+    const observer = new IntersectionObserver(
+        ([entry]) => {
+            header.classList.toggle("scrolled", !entry.isIntersecting);
+        },
+        { rootMargin: `64px 0px 0px 0px` },
+    );
+    observer.observe(scrollSpy);
 </script>

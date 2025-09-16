@@ -56,24 +56,22 @@
 </style>
 
 <script>
-    document.addEventListener("astro:page-load", () => {
-        var menuButton = document.querySelector(".menu-toggle");
-        var header = document.querySelector(".main-header");
-        menuButton.addEventListener("click", function () {
-            const isExpanded = header.classList.toggle("open");
-            const outsideClickFn = function (event: any) {
-                if (!header.contains(event.target)) {
-                    header.classList.remove("open");
-                    menuButton.removeAttribute("aria-expanded");
-                    document.removeEventListener("click", outsideClickFn);
-                }
-            };
-            menuButton?.toggleAttribute("aria-expanded");
-            if (isExpanded) {
-                document.addEventListener("click", outsideClickFn);
-            } else {
+    var menuButton = document.querySelector(".menu-toggle");
+    var header = document.querySelector(".main-header");
+    menuButton.addEventListener("click", function () {
+        const isExpanded = header.classList.toggle("open");
+        const outsideClickFn = function (event: any) {
+            if (!header.contains(event.target)) {
+                header.classList.remove("open");
+                menuButton.removeAttribute("aria-expanded");
                 document.removeEventListener("click", outsideClickFn);
             }
-        });
+        };
+        menuButton?.toggleAttribute("aria-expanded");
+        if (isExpanded) {
+            document.addEventListener("click", outsideClickFn);
+        } else {
+            document.removeEventListener("click", outsideClickFn);
+        }
     });
 </script>

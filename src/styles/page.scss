@@ -79,7 +79,11 @@ button {
     & a,
     & a:link,
     & a:visited {
-        color: var(--primary-color);
+        color: var(--header-background-color);
+    }
+
+    & a:hover {
+        color: var(--background-color);
     }
 }
 
@@ -138,6 +142,14 @@ button {
 
     & .cd-tile-h-main-heading {
         color: #d3edff
+    }
+
+    & .cd-tile-v-main-area {
+        background-color: var(--primary-color);
+    }
+
+    & .cd-tile-v-main-heading {
+        color: var(--background-color);
     }
 }
 

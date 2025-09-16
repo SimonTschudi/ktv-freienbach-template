@@ -5,7 +5,7 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
     trailingSlash: 'never',
     build: {
-        assets: "clubdesk/genwwwfiles",
+        assets: "outdir/genwwwfiles",
         format: 'file'
     },
     experimental: {
@@ -39,9 +39,9 @@ export default defineConfig({
                 output: {
                     assetFileNames: (assetInfo) => {
                         if (assetInfo.name?.startsWith('page') && assetInfo.name?.endsWith('.css')) {
-                            return 'clubdesk/genwwwfiles/page.css';
+                            return 'outdir/genwwwfiles/page.css';
                         }
-                        return 'clubdesk/genwwwfiles/[name]-[hash][extname]';
+                        return 'outdir/genwwwfiles/[name]-[hash][extname]';
                     },
                 }
             }
